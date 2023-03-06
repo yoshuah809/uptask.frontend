@@ -527,6 +527,7 @@ progress {
   font-size: calc(1.625rem + 4.5vw);
   font-weight: 600;
   line-height: 1;
+  margin-bottom: 15px;
 }
 
 .ls-0 {
@@ -2403,11 +2404,11 @@ progress {
   display: block;
   width: 100%;
   padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #55595c;
-  background-color: #f7f7f9;
+  color: #527996;
+  background-color: #ededf4;
   background-clip: padding-box;
   border: 0 solid #ced4da;
   -webkit-appearance: none;
@@ -2934,7 +2935,7 @@ textarea.form-control-lg {
   top: 0;
   left: 0;
   height: 100%;
-  padding: 1rem 1.5rem;
+  padding: 0.751rem 1.5rem;
   pointer-events: none;
   border: 0 solid transparent;
   -webkit-transform-origin: 0 0;
@@ -2952,7 +2953,7 @@ textarea.form-control-lg {
 }
 
 .form-floating>.form-control {
-  padding: 1rem 1.5rem;
+  padding: 1rem 1rem;
 }
 
 .form-floating>.form-control::-webkit-input-placeholder {
@@ -2981,18 +2982,18 @@ textarea.form-control-lg {
 }
 
 .form-floating>.form-control:not(:-ms-input-placeholder) {
-  padding-top: 1.625rem;
+  padding-top: 0.625rem;
   padding-bottom: 0.625rem;
 }
 
 .form-floating>.form-control:focus,
 .form-floating>.form-control:not(:placeholder-shown) {
-  padding-top: 1.625rem;
+  padding-top: 1.925rem;
   padding-bottom: 0.625rem;
 }
 
 .form-floating>.form-control:-webkit-autofill {
-  padding-top: 1.625rem;
+  padding-top: 1.925rem;
   padding-bottom: 0.625rem;
 }
 
@@ -3014,9 +3015,14 @@ textarea.form-control-lg {
 .form-floating>.form-control:focus~label,
 .form-floating>.form-control:not(:placeholder-shown)~label,
 .form-floating>.form-select~label {
-  opacity: 0.65;
-  -webkit-transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
-  transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+
+  -webkit-transform: scale(0.85) translateY(-1.8rem) translateX(0.55rem);
+  transform: scale(0.85) translateY(-1.5rem) translateX(0.75rem);
+  background-color: none !important;
+  outline: none !important;
+  font-weight: 500;
+  padding: 0 5px;
+
 }
 
 .form-floating>.form-control:-webkit-autofill~label {
