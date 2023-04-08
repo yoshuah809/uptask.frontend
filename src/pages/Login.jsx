@@ -46,12 +46,18 @@ const Login = () => {
           </button>
         </div>
       </form>
-      <nav className="md:flex lg:justify-between">
-        <Link className="text-center my-5 text-indigo-600" to="/register">
+      <nav className="lg:flex lg:justify-between">
+        <Link
+          className="block uppercase text-center my-5 text-indigo-600"
+          to="/register"
+        >
           {" "}
           Don't Have An account? Register
         </Link>
-        <Link className="text-center my-5 text-warning" to="/forgot-password">
+        <Link
+          className="block uppercase text-center my-5 text-warning"
+          to="/forgot-password"
+        >
           Forgot Password?
         </Link>
       </nav>

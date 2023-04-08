@@ -39,15 +39,23 @@ const Register = () => {
     //Create user in the API
     setAlert({ message: "Creating user ......" });
     try {
-      const { data } = await axios.post("http://localhost:4000/api/users", {
-        username: name,
-        email,
-        password,
-      });
+      //TODO move to an axios client13
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users`,
+        {
+          username: name,
+          email,
+          password,
+        }
+      );
 
       setAlert({ message: data.message, error: false });
+      setName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
     } catch (error) {
-      console.log(error);
+      setAlert({ message: error.response.data.message, error: true });
     }
   };
 
@@ -73,7 +81,7 @@ const Register = () => {
           </label>
           <input
             type="name"
-            className="w-full mt-2 p-3 border border-sky-600 rounded-lg  text-gray-600 bg-gray-200"
+            className="w-full mt-2 p-3 border rounded-lg  text-gray-600 bg-gray-200"
             id="name"
             placeholder="Enter Name"
             value={name}
@@ -138,12 +146,18 @@ const Register = () => {
           </button>
         </div>
       </form>
-      <nav className="md:flex lg:justify-between">
-        <Link className="text-center my-5 text-indigo-600" to="/">
+      <nav className="lg:flex lg:justify-between">
+        <Link
+          className="block uppercase text-center my-5 text-indigo-600"
+          to="/"
+        >
           {" "}
           Have An account? Sign In
         </Link>
-        <Link className="text-center my-5 text-warning" to="/forgot-password">
+        <Link
+          className="block uppercase text-center my-5 text-warning"
+          to="/forgot-password"
+        >
           Forgot Password?
         </Link>
       </nav>
