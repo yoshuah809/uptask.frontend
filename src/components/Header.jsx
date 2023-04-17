@@ -11,7 +11,7 @@ const Header = () => {
           type="text"
           id="search"
           placeholder="Search Project"
-          className="rounded-lg lg:w-96 block p-2 border border-gray-300 outline-sky-600"
+          className="rounded lg:w-96 block p-2 border border-gray-300 outline-sky-600"
         />
         <div>
           <Link className="text-sky-800 uppercase font-bold" to="/projects">
