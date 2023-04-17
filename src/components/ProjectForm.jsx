@@ -1,17 +1,34 @@
 import { useState, useEffect } from "react";
 import useProjects from "../hooks/useProjects";
 import Alert from "../components/Alert";
+import { useParams, Link } from "react-router-dom";
 
 const ProjectForm = () => {
   const [name, setName] = useState("");
+  const [id, setId] = useState(null);
   const [description, setDescription] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [customer, setCustomer] = useState("");
 
-  //Calling project from context hook
-  const { displayAlert, alert, addProject } = useProjects();
+  // use params to verify if its on edit mode
+  const params = useParams();
 
+  //Calling project from context hook
+  const { displayAlert, alert, submitProject, project } = useProjects();
+
+  useEffect(() => {
+    return () => {
+      if (params.id && project.name) {
+        setName(project.name);
+        setCustomer(project.customer);
+        setDescription(project.description);
+        setDeliveryDate(project.deliveryDate?.split("T")[0]);
+        setId(params.id);
+      }
+    };
+  }, [params.id]);
   //HandleSubmit function
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -24,8 +41,9 @@ const ProjectForm = () => {
     }
 
     //send data to context
-    await addProject({ name, description, customer, deliveryDate });
+    await submitProject({ id, name, description, customer, deliveryDate });
 
+    setId(null);
     setName("");
     setCustomer("");
     setDescription("");
@@ -33,6 +51,7 @@ const ProjectForm = () => {
   };
 
   const { message } = alert;
+
   return (
     <form
       className="bg-white py-10 px-5 md:w-2/3 rounded shadow"
@@ -109,7 +128,7 @@ const ProjectForm = () => {
         type="submit"
         id="submit"
         className="bg-sky-600 w-full p-3 font-bold text-white rounded cursor-pointer hover:bg-sky-800 text-center uppercase transition-colors"
-        value="Create Project"
+        value={id ? "Update Project" : "Create Project"}
       />
     </form>
   );
