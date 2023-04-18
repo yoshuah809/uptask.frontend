@@ -11,6 +11,7 @@ const Login = () => {
 
   // Accessing Auth Context
   const { setAuth } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +31,10 @@ const Login = () => {
       });
       setAlert({});
       localStorage.setItem("token", data.token);
+
       setAuth(data);
+
+      await navigate("/projects");
     } catch (error) {
       setAlert({ message: error.response.data.msg, error: true });
     }

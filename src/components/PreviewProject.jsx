@@ -7,7 +7,10 @@ const PreviewProject = ({ project }) => {
     <div className="border-b p-5 flex">
       <p className="flex-1">
         {name}
-        <span className="text-sm text-gray-500 uppercase"> {customer}</span>
+        <span className="text-sm text-sky-600 font-bold uppercase ml-5">
+          {" "}
+          {customer}
+        </span>
       </p>
       <Link
         className="bg-gray-500 mx-3 p-2 rounded text-white hover:bg-gray-600 cursor-pointer text-sm uppercase"

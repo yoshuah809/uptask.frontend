@@ -9,6 +9,7 @@ const ProjectsProvider = ({ children }) => {
   const [project, setProject] = useState({});
   const [alert, setAlert] = useState({});
   const [loading, setLoading] = useState(true);
+  const [taskFormModal, setTaskFormModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -110,6 +111,66 @@ const ProjectsProvider = ({ children }) => {
       setLoading(false);
     }
   };
+  const deleteProject = async (id) => {
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axiosClient.delete(`/projects/${id}`, config);
+
+      //Updating the state
+      const updatedProjects = projects.filter((project) => project._id !== id);
+
+      setProjects(updatedProjects);
+      setAlert({
+        message: data.message,
+        error: false,
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+    setTimeout(() => {
+      setAlert({});
+      navigate("/projects");
+    }, 2000);
+  };
+  const handleTaskModal = () => {
+    setTaskFormModal(!taskFormModal);
+  };
+  const submitTask = async (task) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await axiosClient.post(`/tasks`, task, config);
+
+      //Add Task to the state
+      const updatedProject = { ...project };
+      updatedProject.tasks = [...project.tasks, data];
+      setProject(updatedProject);
+      setAlert({});
+      setTaskFormModal(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const getProjects = async () => {
@@ -147,6 +208,10 @@ const ProjectsProvider = ({ children }) => {
         project,
         loading,
         submitProject,
+        deleteProject,
+        handleTaskModal,
+        taskFormModal,
+        submitTask,
       }}
     >
       {children}
