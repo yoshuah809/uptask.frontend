@@ -10,6 +10,7 @@ const ProjectsProvider = ({ children }) => {
   const [alert, setAlert] = useState({});
   const [loading, setLoading] = useState(true);
   const [taskFormModal, setTaskFormModal] = useState(false);
+  const [task, setTask] = useState({});
 
   const navigate = useNavigate();
 
@@ -147,8 +148,9 @@ const ProjectsProvider = ({ children }) => {
   };
   const handleTaskModal = () => {
     setTaskFormModal(!taskFormModal);
+    setTask({});
   };
-  const submitTask = async (task) => {
+  const createTask = async (task) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -171,7 +173,49 @@ const ProjectsProvider = ({ children }) => {
       console.log(error);
     }
   };
+  const editTask = async (task) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await axiosClient.put(
+        `/tasks/${task.taskId}`,
+        task,
+        config
+      );
+
+      //Add Task to the state
+      const updatedProject = { ...project };
+      updatedProject.tasks = updatedProject.tasks.map((tmpTask) =>
+        tmpTask._id === data._id ? data : tmpTask
+      );
+
+      setProject(updatedProject);
+      setAlert({});
+      setTaskFormModal(!taskFormModal);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const submitTask = async (task) => {
+    if (task?.taskId) {
+      await editTask(task);
+    } else {
+      await createTask(task);
+    }
+  };
+
+  const handleModalEditTask = (task) => {
+    setTask(task);
+    setTaskFormModal(!taskFormModal);
+  };
   useEffect(() => {
     const getProjects = async () => {
       try {
@@ -212,6 +256,8 @@ const ProjectsProvider = ({ children }) => {
         handleTaskModal,
         taskFormModal,
         submitTask,
+        handleModalEditTask,
+        task,
       }}
     >
       {children}

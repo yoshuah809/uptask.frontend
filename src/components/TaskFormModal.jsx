@@ -6,19 +6,57 @@ import { useParams } from "react-router-dom";
 
 const PRIORITY = ["Low", "Medium", "High"];
 
-const ModalFormularioTarea = () => {
-  const { handleTaskModal, taskFormModal, displayAlert, alert, submitTask } =
-    useProjects();
+const defaultFormFields = {
+  name: "",
+  taskId: "",
+  description: "",
+  priority: "",
+  deliveryDate: "",
+};
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("");
-  const [deliveryDate, setDeliveryDate] = useState("");
+const ModalFormularioTarea = () => {
+  const {
+    handleTaskModal,
+    taskFormModal,
+    displayAlert,
+    alert,
+    submitTask,
+    task,
+  } = useProjects();
+
+  //   const [name, setName] = useState("");
+  //   const [description, setDescription] = useState("");
+  //   const [priority, setPriority] = useState("");
+  //   const [deliveryDate, setDeliveryDate] = useState("");
+
+  const [formFields, setFormFields] = useState(defaultFormFields);
+  const { name, description, priority, deliveryDate, taskId } = formFields;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormFields({ ...formFields, [name]: value });
+  };
 
   const { id } = useParams();
 
+  useEffect(() => {
+    if (task._id) {
+      setFormFields({
+        name: task.name,
+        taskId: task._id,
+        description: task.description,
+        priority: task.priority,
+        deliveryDate: task.deliveryDate?.split("T")[0],
+      });
+      return;
+    }
+    setFormFields(defaultFormFields);
+  }, [task]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    //console.log(formFields);
+
     if ([name, description, priority, deliveryDate].includes("")) {
       //console.log("all fields are required");
       displayAlert({
@@ -33,11 +71,10 @@ const ModalFormularioTarea = () => {
       priority,
       deliveryDate,
       project: id,
+      taskId,
     });
-    setName("");
-    setDescription("");
-    setPriority("");
-    setDeliveryDate("");
+    //reset fields after submition
+    setFormFields(defaultFormFields);
   };
 
   const { message } = alert;
@@ -108,7 +145,7 @@ const ModalFormularioTarea = () => {
                     as="h3"
                     className="text-lg leading-6 font-bold text-sky-600"
                   >
-                    Create Task
+                    {taskId ? "Edit Task" : "Create Task"}
                   </Dialog.Title>
                   {message && <Alert alert={alert} />}
                   <form className="my-10" onSubmit={handleSubmit}>
@@ -122,10 +159,12 @@ const ModalFormularioTarea = () => {
                       <input
                         type="text"
                         id="name"
+                        name="name"
                         className="border-2 w-full p-2 mt-2 rounded outline-sky-600"
                         placeholder="Type your task name"
+                        required
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={handleChange}
                       />
                     </div>
                     <div className="mb-5">
@@ -137,11 +176,13 @@ const ModalFormularioTarea = () => {
                       </label>
                       <textarea
                         id="description"
+                        name="description"
                         resize="no"
+                        required
                         className="border-2 w-full p-2 mt-2 rounded outline-sky-600"
                         placeholder="Task Description"
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        onChange={handleChange}
                       />
                     </div>
                     <div className="mb-5">
@@ -154,10 +195,12 @@ const ModalFormularioTarea = () => {
                       <input
                         type="date"
                         id="deliveryDate"
+                        name="deliveryDate"
+                        required
                         resize="no"
                         className="border-2 w-full p-2 mt-2 rounded outline-sky-600"
                         value={deliveryDate}
-                        onChange={(e) => setDeliveryDate(e.target.value)}
+                        onChange={handleChange}
                       />
                     </div>
                     <div className="mb-5">
@@ -169,9 +212,11 @@ const ModalFormularioTarea = () => {
                       </label>
                       <select
                         id="priority"
+                        name="priority"
                         className="border-2 w-full p-2 mt-2 rounded outline-sky-600"
                         value={priority}
-                        onChange={(e) => setPriority(e.target.value)}
+                        required
+                        onChange={handleChange}
                       >
                         <option value="">--Select Priority--</option>
                         {PRIORITY.map((opt, index) => (
@@ -183,7 +228,7 @@ const ModalFormularioTarea = () => {
                       type="submit"
                       id="submit"
                       className="bg-sky-600 w-full p-3 font-bold text-white rounded cursor-pointer hover:bg-sky-800 text-center uppercase transition-colors"
-                      value={id ? "ADD task" : "Create task"}
+                      value={taskId ? "Save Changes" : "Create task"}
                     />
                   </form>
                 </div>
