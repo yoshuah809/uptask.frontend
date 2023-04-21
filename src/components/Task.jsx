@@ -4,7 +4,7 @@ import formatDate from "../helpers/formatDate";
 import useProjects from "../hooks/useProjects";
 
 const Task = ({ task }) => {
-  const { handleModalEditTask } = useProjects();
+  const { handleModalEditTask, handleModalDeleteTask } = useProjects();
 
   const { name, description, priority, deliveryDate, _id, isComplete } = task;
   return (
@@ -34,7 +34,10 @@ const Task = ({ task }) => {
             Incomplete
           </button>
         )}
-        <button className="bg-red-600 px-4 py-3 text-white uppercase rounded font-bold hover:bg-red-700">
+        <button
+          className="bg-red-600 px-4 py-3 text-white uppercase rounded font-bold hover:bg-red-700"
+          onClick={() => handleModalDeleteTask(task)}
+        >
           <DeleteIcon />
         </button>
       </div>

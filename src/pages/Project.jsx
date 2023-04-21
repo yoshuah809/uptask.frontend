@@ -6,9 +6,12 @@ import TaskFormModal from "../components/TaskFormModal";
 import Task from "../components/Task";
 import AddIcon from "../helpers/AddIcon";
 import EditIcon from "../helpers/EditIcon";
+import TaskDeleteModal from "../components/TaskDeleteModal";
+import Alert from "../components/Alert";
 
 const Project = () => {
-  const { getProject, project, loading, handleTaskModal } = useProjects();
+  const { getProject, project, loading, handleTaskModal, alert } =
+    useProjects();
 
   const { id } = useParams();
 
@@ -19,6 +22,8 @@ const Project = () => {
       //console.log(project);
     };
   }, []);
+
+  const { message } = alert;
 
   return loading ? (
     "Loading..."
@@ -42,6 +47,11 @@ const Project = () => {
         new task
       </button>
       <p className="font-bold textxl mt-10">Project Tast</p>
+      <div className="flex justify-center">
+        <div className="w-full md:w-1/3 lg:w-1/4">
+          {message && <Alert alert={alert} />}
+        </div>
+      </div>
       <div className="bg-white shadow mt-10 rounded">
         {project.tasks?.length ? (
           project.tasks?.map((task) => <Task key={task._id} task={task} />)
@@ -52,6 +62,7 @@ const Project = () => {
         )}
       </div>
       <TaskFormModal />
+      <TaskDeleteModal />
     </>
   );
 };
