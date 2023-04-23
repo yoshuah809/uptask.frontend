@@ -8,6 +8,8 @@ import AddIcon from "../helpers/AddIcon";
 import EditIcon from "../helpers/EditIcon";
 import TaskDeleteModal from "../components/TaskDeleteModal";
 import Alert from "../components/Alert";
+import Contributor from "../components/Contributor";
+import ContributorDeleteModal from "../components/ContributorDeleteModal";
 
 const Project = () => {
   const { getProject, project, loading, handleTaskModal, alert } =
@@ -61,8 +63,32 @@ const Project = () => {
           </p>
         )}
       </div>
+      <div className="flex items-center justify-between mt-10">
+        <p className="font-bold text-3xl text-sky-600">Contributors:</p>
+        <Link
+          to={`/projects/new-contributor/${project._id}`}
+          className="flex items-center justify-between text-sky-600 uppercase font-bold hover:text-sky-700"
+        >
+          <AddIcon />
+          Add
+        </Link>
+      </div>
+
+      <div className="bg-white shadow mt-10 rounded">
+        {project.members?.length ? (
+          project.members?.map((contributor) => (
+            <Contributor key={contributor._id} contributor={contributor} />
+          ))
+        ) : (
+          <p className="text-center my-5 p-10 text-sky-400">
+            There are no Colaborators for this project
+          </p>
+        )}
+      </div>
+
       <TaskFormModal />
       <TaskDeleteModal />
+      <ContributorDeleteModal />
     </>
   );
 };

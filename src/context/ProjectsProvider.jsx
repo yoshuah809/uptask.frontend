@@ -12,6 +12,8 @@ const ProjectsProvider = ({ children }) => {
   const [taskFormModal, setTaskFormModal] = useState(false);
   const [task, setTask] = useState({});
   const [modalDeleteTask, setModalDeleteTask] = useState(false);
+  const [modalDeleteContributor, setModalDeleteContributor] = useState(false);
+  const [contributor, setContributor] = useState({});
 
   const navigate = useNavigate();
 
@@ -108,7 +110,10 @@ const ProjectsProvider = ({ children }) => {
       const { data } = await axiosClient.get(`/projects/${id}`, config);
       setProject(data);
     } catch (error) {
-      console.log(error);
+      setAlert({
+        message: data.message,
+        error: false,
+      });
     } finally {
       setLoading(false);
     }
@@ -281,6 +286,118 @@ const ProjectsProvider = ({ children }) => {
     };
   }, []);
 
+  const submitContributor = async (email) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await axiosClient.post(
+        "/projects/contributors",
+        { email },
+        config
+      );
+      setContributor(data);
+      setAlert({});
+    } catch (error) {
+      setAlert({
+        message: error.response.data.message,
+        error: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addContributor = async (email) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await axiosClient.post(
+        `/projects/contributors/${project._id}`,
+        email,
+        config
+      );
+      setAlert({
+        message: data.message,
+        error: false,
+      });
+      setContributor({});
+    } catch (error) {
+      setAlert({
+        message: error.response.data.message,
+        error: true,
+      });
+    } finally {
+      setTimeout(() => {
+        setAlert({});
+      }, 3000);
+    }
+  };
+
+  const handleModalDeleteContributor = (contributor) => {
+    setModalDeleteContributor(!modalDeleteContributor);
+    setContributor(contributor);
+  };
+
+  const deleteContributor = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await axiosClient.post(
+        `/projects/delete-contributor/${project._id}`,
+        { id: contributor._id },
+        config
+      );
+
+      const updatedProject = { ...project };
+
+      //console.log(updatedProjectcontributors);
+      updatedProject.members = updatedProject.members.filter(
+        (tmpContributor) => tmpContributor._id !== contributor._id
+      );
+      // console.log(updatedProject.contribuitors);
+
+      setProject(updatedProject);
+      setModalDeleteContributor(!modalDeleteContributor);
+      setAlert({
+        message: data.message,
+        error: false,
+      });
+      setContributor({});
+      setModalDeleteContributor(false);
+    } catch (error) {
+      setAlert({
+        message: error.response,
+        error: true,
+      });
+    } finally {
+      setTimeout(() => {
+        setAlert({});
+      }, 3000);
+    }
+  };
+
   return (
     <ProjectsContext.Provider
       value={{
@@ -301,6 +418,12 @@ const ProjectsProvider = ({ children }) => {
         modalDeleteTask,
         handleModalDeleteTask,
         deleteTask,
+        submitContributor,
+        contributor,
+        addContributor,
+        modalDeleteContributor,
+        handleModalDeleteContributor,
+        deleteContributor,
       }}
     >
       {children}
