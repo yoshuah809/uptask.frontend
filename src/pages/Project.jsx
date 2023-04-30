@@ -10,6 +10,7 @@ import TaskDeleteModal from "../components/TaskDeleteModal";
 import Alert from "../components/Alert";
 import Contributor from "../components/Contributor";
 import ContributorDeleteModal from "../components/ContributorDeleteModal";
+import useAdmin from "../hooks/useAdmin";
 
 const Project = () => {
   const { getProject, project, loading, handleTaskModal, alert } =
@@ -17,7 +18,8 @@ const Project = () => {
 
   const { id } = useParams();
 
-  const { name } = project;
+  const admin = useAdmin();
+
   useEffect(() => {
     return () => {
       getProject(id);
@@ -27,28 +29,31 @@ const Project = () => {
 
   const { message } = alert;
 
-  return loading ? (
-    "Loading..."
-  ) : (
+  return (
     <>
       <div className="flex justify-between">
-        <h1 className="font-black text-4xl">{name}</h1>
-        <div className="text-sky-600 flex items-center gap-2 hover:text-sky-700">
-          <EditIcon />
-          <Link className="font-bold uppercase" to={`/projects/edit/${id}`}>
-            Edit
-          </Link>
-        </div>
+        <h1 className="font-black text-4xl">{name}</h1>2
+        {admin && (
+          <div className="text-sky-600 flex items-center gap-2 hover:text-sky-700">
+            <EditIcon />
+            <Link className="font-bold uppercase" to={`/projects/edit/${id}`}>
+              Edit
+            </Link>
+          </div>
+        )}
       </div>
-      <button
-        onClick={handleTaskModal}
-        type="button"
-        className="mt-5 text-sm px-5 py-3 w-full md:w-auto rounded uppercase font-bold bg-sky-500 hover:bg-sky-600 cursor-pointer text-white text-center flex gap-2 justify-center"
-      >
-        <AddIcon />
-        new task
-      </button>
-      <p className="font-bold textxl mt-10">Project Tast</p>
+
+      {admin && (
+        <button
+          onClick={handleTaskModal}
+          type="button"
+          className="mt-5 text-sm px-5 py-3 w-full md:w-auto rounded uppercase font-bold bg-sky-500 hover:bg-sky-600 cursor-pointer text-white text-center flex gap-2 justify-center"
+        >
+          <AddIcon />
+          new task
+        </button>
+      )}
+      <p className="font-bold text-xl mt-10">Project Tast</p>
       <div className="flex justify-center">
         <div className="w-full md:w-1/3 lg:w-1/4">
           {message && <Alert alert={alert} />}
@@ -63,28 +68,32 @@ const Project = () => {
           </p>
         )}
       </div>
-      <div className="flex items-center justify-between mt-10">
-        <p className="font-bold text-3xl text-sky-600">Contributors:</p>
-        <Link
-          to={`/projects/new-contributor/${project._id}`}
-          className="flex items-center justify-between text-sky-600 uppercase font-bold hover:text-sky-700"
-        >
-          <AddIcon />
-          Add
-        </Link>
-      </div>
-
-      <div className="bg-white shadow mt-10 rounded">
-        {project.members?.length ? (
-          project.members?.map((contributor) => (
-            <Contributor key={contributor._id} contributor={contributor} />
-          ))
-        ) : (
-          <p className="text-center my-5 p-10 text-sky-400">
-            There are no Colaborators for this project
-          </p>
-        )}
-      </div>
+      {admin && (
+        <>
+          {" "}
+          <div className="flex items-center justify-between mt-10">
+            <p className="font-bold text-3xl text-sky-600">Contributors:</p>
+            <Link
+              to={`/projects/new-contributor/${project._id}`}
+              className="flex items-center justify-between text-sky-600 uppercase font-bold hover:text-sky-700"
+            >
+              <AddIcon />
+              Add
+            </Link>
+          </div>
+          <div className="bg-white shadow mt-10 rounded">
+            {project.members?.length ? (
+              project.members?.map((contributor) => (
+                <Contributor key={contributor._id} contributor={contributor} />
+              ))
+            ) : (
+              <p className="text-center my-5 p-10 text-sky-400">
+                There are no Colaborators for this project
+              </p>
+            )}
+          </div>
+        </>
+      )}
 
       <TaskFormModal />
       <TaskDeleteModal />

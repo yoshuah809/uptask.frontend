@@ -110,12 +110,14 @@ const ProjectsProvider = ({ children }) => {
       const { data } = await axiosClient.get(`/projects/${id}`, config);
       setProject(data);
     } catch (error) {
+      navigate("/projects");
       setAlert({
         message: data.message,
         error: false,
       });
     } finally {
       setLoading(false);
+      setAlert({});
     }
   };
   const deleteProject = async (id) => {
@@ -398,6 +400,36 @@ const ProjectsProvider = ({ children }) => {
     }
   };
 
+  const completeTask = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await axiosClient.post(
+        `/tasks/update-status/${id}`,
+        {},
+        config
+      );
+
+      //updating the state
+      const updatedProject = { ...project };
+      updatedProject.tasks = updatedProject.tasks.map((currentTask) =>
+        currentTask._id === data._id ? data : currentTask
+      );
+      setProject(updatedProject);
+      setTask({});
+      setAlert({});
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
   return (
     <ProjectsContext.Provider
       value={{
@@ -424,6 +456,7 @@ const ProjectsProvider = ({ children }) => {
         modalDeleteContributor,
         handleModalDeleteContributor,
         deleteContributor,
+        completeTask,
       }}
     >
       {children}
